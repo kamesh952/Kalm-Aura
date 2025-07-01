@@ -12,7 +12,7 @@ import {
   selectAdminError,
   selectAdminSuccess,
   selectAdminSuccessMessage,
-} from "../../redux/slices/adminSlice"; // Adjust the import path as needed
+} from "../../redux/slices/adminSlice";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
@@ -65,7 +65,6 @@ const UserManagement = () => {
   };
 
   const handleRoleChange = (userId, newRole) => {
-    // Find the user to get current data
     const user = users.find(u => u._id === userId);
     if (user) {
       dispatch(updateUser({
@@ -80,14 +79,6 @@ const UserManagement = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(addUser(formData));
-    
-    // Reset form only if we expect success (we'll handle this in useEffect)
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      role: "customer",
-    });
   };
 
   // Reset form when user is successfully added
@@ -103,7 +94,7 @@ const UserManagement = () => {
   }, [success, successMessage]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold mb-6">User Management</h2>
 
       {/* Success Message */}
@@ -128,11 +119,11 @@ const UserManagement = () => {
       )}
 
       {/* Add New User Form */}
-      <div className="bg-white shadow-md rounded p-5 mb-8">
+      <div className="bg-white shadow-md rounded-lg p-5 mb-8">
         <h3 className="text-lg font-semibold mb-4">Add New User</h3>
-        <form onSubmit={handleSubmit} className="grid gap-2">
-          <label>
-            <span className="block mb-1 font-medium">Name</span>
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-1">
+            <label className="block mb-1 font-medium">Name</label>
             <input
               type="text"
               name="name"
@@ -143,10 +134,10 @@ const UserManagement = () => {
               required
               disabled={loading}
             />
-          </label>
+          </div>
 
-          <label>
-            <span className="block mb-1 font-medium">Email</span>
+          <div className="md:col-span-1">
+            <label className="block mb-1 font-medium">Email</label>
             <input
               type="email"
               name="email"
@@ -157,10 +148,10 @@ const UserManagement = () => {
               required
               disabled={loading}
             />
-          </label>
+          </div>
 
-          <label>
-            <span className="block mb-1 font-medium">Password</span>
+          <div className="md:col-span-1">
+            <label className="block mb-1 font-medium">Password</label>
             <input
               type="password"
               name="password"
@@ -171,10 +162,10 @@ const UserManagement = () => {
               required
               disabled={loading}
             />
-          </label>
+          </div>
 
-          <label>
-            <span className="block mb-1 font-medium">Role</span>
+          <div className="md:col-span-1">
+            <label className="block mb-1 font-medium">Role</label>
             <select
               name="role"
               className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -185,19 +176,21 @@ const UserManagement = () => {
               <option value="customer">Customer</option>
               <option value="admin">Admin</option>
             </select>
-          </label>
+          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {loading ? "Adding..." : "Add User"}
-          </button>
+          <div className="md:col-span-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full md:w-auto mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? "Adding..." : "Add User"}
+            </button>
+          </div>
         </form>
       </div>
 
-      {/* User List Table */}
+      {/* User List */}
       <div className="mt-5">
         <h3 className="text-lg font-semibold mb-3">
           Existing Users ({users.length})
@@ -208,49 +201,63 @@ const UserManagement = () => {
             No users found. Add some users to get started.
           </div>
         ) : (
-          <div className="relative shadow-md sm:rounded-lg overflow-hidden">
-            <table className="min-w-full text-left text-gray-500">
-              <thead className="bg-gray-200 text-xs uppercase text-gray-700">
-                <tr>
-                  <th className="px-4 py-2">Name</th>
-                  <th className="px-4 py-2">Email</th>
-                  <th className="px-4 py-2">Role</th>
-                  <th className="px-4 py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user._id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2 font-bold text-gray-900">
-                      {user.name}
-                    </td>
-                    <td className="px-4 py-2">{user.email}</td>
-                    <td className="px-4 py-2 capitalize">
-                      <select
-                        className="border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={user.role}
-                        onChange={(e) =>
-                          handleRoleChange(user._id, e.target.value)
-                        }
-                        disabled={loading}
-                      >
-                        <option value="customer">Customer</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => handleDeleteUser(user._id)}
-                        disabled={loading}
-                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                      >
-                        {loading ? "..." : "Delete"}
-                      </button>
-                    </td>
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                      Email
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {users.map((user) => (
+                    <tr key={user._id} className="hover:bg-gray-50">
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
+                        <div className="text-sm text-gray-500">{user.email}</div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <select
+                          className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                          disabled={loading}
+                        >
+                          <option value="customer">Customer</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDeleteUser(user._id)}
+                          disabled={loading}
+                          className="text-red-600 hover:text-red-900 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        >
+                          {loading ? "..." : "Delete"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

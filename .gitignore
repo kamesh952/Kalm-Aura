@@ -16,3 +16,4 @@ backend/node_modules/
 # Build output (optional, if you're building locally)
 frontend/dist/
 backend/dist/
+.vercel
