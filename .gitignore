@@ -1,0 +1,18 @@
+# Logs
+logs/
+*.log
+
+# OS-specific files
+.DS_Store
+
+# Environment variables
+frontend/.env
+backend/.env
+
+# Node modules (dependencies — should not be committed)
+frontend/node_modules/
+backend/node_modules/
+
+# Build output (optional, if you're building locally)
+frontend/dist/
+backend/dist/
