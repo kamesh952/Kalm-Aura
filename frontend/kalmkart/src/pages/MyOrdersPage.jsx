@@ -35,44 +35,44 @@ const MyOrdersPage = () => {
   }, [hasMissingProductData, pendingProductFetches, dispatch]);
 
   // Robust image parser that handles stringified objects
- const parseImageData = (image) => {
-  if (!image) return null;
+  const parseImageData = (image) => {
+    if (!image) return null;
 
-  // Case 1: Already a URL string
-  if (typeof image === 'string' && image.startsWith('http')) {
-    return image;
-  }
-
-  // Case 2: Stringified object with invalid format
-  if (typeof image === 'string') {
-    try {
-      // Direct URL extraction fallback
-      const urlMatch = image.match(/https?:\/\/[^\s'"]+/);
-      if (urlMatch) return urlMatch[0];
-
-      // Advanced parsing for malformed JSON
-      const jsonString = image
-        .replace(/\n/g, '')         // Remove newlines
-        .replace(/'/g, '"')         // Replace single quotes
-        .replace(/new ObjectId\(([^)]+)\)/g, '"$1"') // Fix ObjectId
-        .replace(/([{\s,])(\w+):/g, '$1"$2":') // Quote property names
-        .replace(/:\s*"([^"]*)"\s*([,}])/g, (match, p1, p2) => {
-          return ': "' + p1.replace(/"/g, '\\"') + '"' + p2; // Escape inner quotes
-        });
-
-      const parsed = JSON.parse(jsonString);
-      return parsed.url || parsed.imageUrl || parsed;
-    } catch (e) {
-      console.warn("Image parse failed, attempting direct extraction");
-      // Final fallback - try to extract URL directly
-      const urlMatch = image.match(/https?:\/\/[^\s'"]+/);
-      return urlMatch ? urlMatch[0] : null;
+    // Case 1: Already a URL string
+    if (typeof image === 'string' && image.startsWith('http')) {
+      return image;
     }
-  }
 
-  // Case 3: Already a proper image object
-  return image.url || image;
-};
+    // Case 2: Stringified object with invalid format
+    if (typeof image === 'string') {
+      try {
+        // Direct URL extraction fallback
+        const urlMatch = image.match(/https?:\/\/[^\s'"]+/);
+        if (urlMatch) return urlMatch[0];
+
+        // Advanced parsing for malformed JSON
+        const jsonString = image
+          .replace(/\n/g, '')         // Remove newlines
+          .replace(/'/g, '"')         // Replace single quotes
+          .replace(/new ObjectId\(([^)]+)\)/g, '"$1"') // Fix ObjectId
+          .replace(/([{\s,])(\w+):/g, '$1"$2":') // Quote property names
+          .replace(/:\s*"([^"]*)"\s*([,}])/g, (match, p1, p2) => {
+            return ': "' + p1.replace(/"/g, '\\"') + '"' + p2; // Escape inner quotes
+          });
+
+        const parsed = JSON.parse(jsonString);
+        return parsed.url || parsed.imageUrl || parsed;
+      } catch (e) {
+        console.warn("Image parse failed, attempting direct extraction");
+        // Final fallback - try to extract URL directly
+        const urlMatch = image.match(/https?:\/\/[^\s'"]+/);
+        return urlMatch ? urlMatch[0] : null;
+      }
+    }
+
+    // Case 3: Already a proper image object
+    return image.url || image;
+  };
 
   const getProductImage = (orderItem) => {
     // Try to parse the orderItem.image first
@@ -117,7 +117,7 @@ const MyOrdersPage = () => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-4 sm:mx-6 lg:mx-8 my-4">
         <div className="flex items-center text-red-800">
           <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -135,11 +135,11 @@ const MyOrdersPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h1>
         {productsLoading && (
-          <span className="text-sm text-gray-500 flex items-center">
+          <span className="text-xs sm:text-sm text-gray-500 flex items-center">
             <span className="animate-spin mr-2">↻</span>
             Loading product details...
           </span>
@@ -147,100 +147,149 @@ const MyOrdersPage = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center py-8 sm:py-12 px-4">
+          <svg className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No orders</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by placing your first order.</p>
-          <div className="mt-6">
+          <h3 className="mt-2 text-base sm:text-lg font-medium text-gray-900">No orders</h3>
+          <p className="mt-1 text-xs sm:text-sm text-gray-500">Get started by placing your first order.</p>
+          <div className="mt-4 sm:mt-6">
             <button
               onClick={() => navigate('/collection/:collection')}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               Browse Products
             </button>
           </div>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Items
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order ID
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {orders.map((order) => {
-                const firstItem = order.orderItems?.[0];
-                return (
-                  <tr 
-                    key={order._id} 
-                    onClick={() => handleRowClick(order._id)}
-                    className="hover:bg-gray-50 cursor-pointer"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <img
-                            className="h-10 w-10 rounded-md object-cover"
-                            src={getProductImage(firstItem)}
-                            alt={getProductName(firstItem)}
-                            onError={(e) => {
-                              console.error("Image load failed for item:", {
-                                rawImage: firstItem?.image,
-                                productImage: firstItem?.productId?.image,
-                                parsed: parseImageData(firstItem?.image)
-                              });
-                              e.target.src = "https://via.placeholder.com/48?text=No+Image";
-                            }}
-                          />
+        <div className="bg-white shadow overflow-hidden rounded-lg">
+          {/* Mobile view - Cards */}
+          <div className="sm:hidden space-y-4 p-2">
+            {orders.map((order) => {
+              const firstItem = order.orderItems?.[0];
+              return (
+                <div 
+                  key={order._id} 
+                  onClick={() => handleRowClick(order._id)}
+                  className="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0 h-12 w-12">
+                        <img
+                          className="h-12 w-12 rounded-md object-cover"
+                          src={getProductImage(firstItem)}
+                          alt={getProductName(firstItem)}
+                          onError={(e) => {
+                            e.target.src = "https://via.placeholder.com/48?text=No+Image";
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 line-clamp-1">
+                          {getProductName(firstItem)}
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {getProductName(firstItem)}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {order.orderItems.length} {order.orderItems.length === 1 ? 'item' : 'items'}
-                          </div>
+                        <div className="text-xs text-gray-500">
+                          {order.orderItems.length} {order.orderItems.length === 1 ? 'item' : 'items'}
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      #{order._id.slice(-8)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${order.totalPrice?.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-gray-900">
+                        ${order.totalPrice?.toFixed(2)}
+                      </div>
+                      <span className={`mt-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         order.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                       }`}>
                         {order.isPaid ? 'Paid' : 'Pending'}
                       </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex justify-between text-xs text-gray-500">
+                    <span>#{order._id.slice(-8)}</span>
+                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tablet/Desktop view - Table */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Items
+                  </th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    Order ID
+                  </th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Total
+                  </th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {orders.map((order) => {
+                  const firstItem = order.orderItems?.[0];
+                  return (
+                    <tr 
+                      key={order._id} 
+                      onClick={() => handleRowClick(order._id)}
+                      className="hover:bg-gray-50 cursor-pointer"
+                    >
+                      <td className="px-3 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <img
+                              className="h-10 w-10 rounded-md object-cover"
+                              src={getProductImage(firstItem)}
+                              alt={getProductName(firstItem)}
+                              onError={(e) => {
+                                e.target.src = "https://via.placeholder.com/48?text=No+Image";
+                              }}
+                            />
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900 line-clamp-1">
+                              {getProductName(firstItem)}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {order.orderItems.length} {order.orderItems.length === 1 ? 'item' : 'items'}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-4 whitespace-nowrap text-xs text-gray-500 hidden md:table-cell">
+                        #{order._id.slice(-8)}
+                      </td>
+                      <td className="px-3 py-4 whitespace-nowrap text-xs text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ${order.totalPrice?.toFixed(2)}
+                      </td>
+                      <td className="px-3 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          order.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {order.isPaid ? 'Paid' : 'Pending'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
